@@ -3,34 +3,26 @@
 from flask import Flask, Response, request
 # import ujson as json
 import json
-
 from flask_cors import CORS
+import MySQLdb
+from config import *
 
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-todos = [
-    {
-        'id': 0,
-        'text': '앵귤러 배우고',
-        'checked': True,
-    },
-    {
-        'id': 1,
-        'text': '리액트 배우고',
-        'checked': False,
-    },
-    {
-        'id': 2,
-        'text': '뷰 배우자',
-        'checked': False,
-    },
-]
-
+def get_db_connect():
+    db = MySQLdb.connect(user=DB_USER, passwd=DB_PASS, db=DB_NAME)
+    return db
 
 @app.route("/todos")
 def get_todos():
+    db = get_db_connect()
+    c = db.cursor(MySQLdb.cursors.DictCursor)
+    c.execute("""select id, todo as text, checked, UNIX_TIMESTAMP(created_at) as created_at from todos""")
+    todos = c.fetchall()
+    c.close()
+
     resp = Response(response=json.dumps(todos),
                     mimetype="application/json") #Response 객체 생성
     return resp
@@ -38,21 +30,36 @@ def get_todos():
 
 @app.route("/todos", methods=['POST'])
 def add_todo():
-    is_checked = request.form['check'] == 'true'
-    value = {'text': request.form['text'], 'checked': is_checked, 'id': len(todos)}
-    todos.append(value)
+    db = get_db_connect()
+    c = db.cursor(MySQLdb.cursors.DictCursor)
 
-    resp = Response(response=json.dumps(value),
+    todo_text = request.form['text']
+    c.execute(f"""insert into todos(todo) values('{todo_text}')""")
+    db.commit()
+
+    c.execute("""select id, todo as text, checked, UNIX_TIMESTAMP(created_at) as created_at from todos""")
+    todos = c.fetchall()
+    c.close()
+
+    resp = Response(response=json.dumps(todos),
                     mimetype="application/json") #Response 객체 생성
     return resp
 
 
 @app.route("/todos/<int:todo_id>", methods=['PUT'])
 def update_todo(todo_id):
-    for todo in todos:
-        if todo['id'] == todo_id:
-            todo['checked'] = not todo['checked']
-            break
+    db = get_db_connect()
+    c = db.cursor(MySQLdb.cursors.DictCursor)
+
+    c.execute(f"""select * from todos where id = '{todo_id}'""")
+    todo = c.fetchone()
+    checked = 0 if todo['checked'] == 1 else 1
+    c.execute(f"""update todos set checked='{checked}' where id = '{todo_id}'""")
+    db.commit()
+
+    c.execute("""select id, todo as text, checked, UNIX_TIMESTAMP(created_at) as created_at from todos""")
+    todos = c.fetchall()
+    c.close()
 
     resp = Response(response=json.dumps(todos),
                     mimetype="application/json")  # Response 객체 생성
@@ -61,11 +68,15 @@ def update_todo(todo_id):
 
 @app.route("/todos/<int:todo_id>", methods=['DELETE'])
 def remove_todo(todo_id):
-    for idx, todo in enumerate(todos):
-        if todo['id'] == todo_id:
-            # todos.remove(todo)
-            todos.pop(idx)
-            break
+    db = get_db_connect()
+    c = db.cursor(MySQLdb.cursors.DictCursor)
+
+    c.execute(f"""delete from todos where id = {todo_id}""")
+    db.commit()
+
+    c.execute("""select id, todo as text, checked, UNIX_TIMESTAMP(created_at) as created_at from todos""")
+    todos = c.fetchall()
+    c.close()
 
     resp = Response(response=json.dumps(todos),
                     mimetype="application/json") #Response 객체 생성
