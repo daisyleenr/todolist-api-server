@@ -10,6 +10,8 @@ flask = "*"
 ujson = "*"
 flask-cors = "*"
 mysqlclient = "*"
+sqlalchemy = "*"
+alembic = "*"
 
 [requires]
 python_version = "3.7"
