@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from sqlalchemy import create_engine, types, Column, Integer, String, DateTime, Boolean, TIMESTAMP
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
@@ -18,7 +18,7 @@ class Todos(Base):
     __tablename__ = 'todos'
 
     id = Column(Integer, primary_key=True)
-    todo = Column(String(255))
+    title = Column(String(255))
     checked = Column(Boolean())
     created_at = Column(TIMESTAMP, default=datetime.now)
 
@@ -26,4 +26,4 @@ class Todos(Base):
         return str(self)
 
     def __str__(self):
-        return f"{self.id} : {self.todo} : {self.checked} : {self.created_at}"
+        return f"{self.id} : {self.title} : {self.checked} : {self.created_at}"

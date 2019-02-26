@@ -12,7 +12,7 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 
 
 def create_new_todo(todo_title):
-    todo = Todos(todo=todo_title)
+    todo = Todos(title=todo_title)
     db_session.add(todo)
     db_session.commit()
     return todo
@@ -28,7 +28,6 @@ def get_todo_by_id(todo_id):
 
 def update_checked(todo, checked):
     todo.checked = checked
-    db_session.add(todo)
     db_session.commit()
 
 
@@ -49,7 +48,7 @@ class TestSpike:
         assert todo_1.id is not None
 
         ret_todo = get_todo_by_id(todo_id=todo_1.id)
-        assert ret_todo.todo == 'SQLAlchemy 배우기'
+        assert ret_todo.title == 'SQLAlchemy 배우기'
 
     def test_list_todo(self):
         todo_list = get_todo_list()
@@ -70,7 +69,7 @@ class TestSpike:
         assert todo_1.checked
 
         ret_todo = get_todo_by_id(todo_1.id)
-        assert todo_1.todo == ret_todo.todo
+        assert todo_1.title == ret_todo.title
         assert ret_todo.checked
 
         todo_1.checked = False
@@ -78,15 +77,16 @@ class TestSpike:
         db_session.commit()
 
         ret_todo_2 = get_todo_by_id(todo_1.id)
-        assert todo_1.todo == ret_todo_2.todo
+        assert todo_1.title == ret_todo_2.title
         assert not ret_todo_2.checked
 
     def test_delete(self):
         count_1 = len(db_session.query(Todos).all())
         ret_todo = create_new_todo('삭제 테스트')
         db_session.query(Todos).filter_by(id=ret_todo.id).delete()
+        db_session.commit()
         count_2 = len(db_session.query(Todos).all())
-        assert count_1 == count_2
+        assert count_1 == count_2 # commit이 빠져서 실제로 DB에 반영이 안됬을 때 발견할 수 없음
 
 
     # @staticmethod
