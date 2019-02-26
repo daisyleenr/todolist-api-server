@@ -19,4 +19,5 @@ class Todos(Base):
 
     id = Column(Integer, primary_key=True)
     todo = Column(String(255))
+    checked = Column(Boolean())
     created_at = Column(TIMESTAMP, default=datetime.now)
