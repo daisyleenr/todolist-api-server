@@ -21,3 +21,9 @@ class Todos(Base):
     todo = Column(String(255))
     checked = Column(Boolean())
     created_at = Column(TIMESTAMP, default=datetime.now)
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        return f"{self.id} : {self.todo} : {self.checked} : {self.created_at}"
