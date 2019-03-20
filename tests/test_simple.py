@@ -1,10 +1,10 @@
 # coding: utf-8
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from model import *
-from config import TEST_DB_STRING
+from model import Todos
+from config import DB_STRING
 
-engine = create_engine(TEST_DB_STRING, echo=True, pool_recycle=3600)
+engine = create_engine(DB_STRING, echo=True, pool_recycle=3600)
 Session = sessionmaker(bind=engine)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
@@ -29,7 +29,6 @@ def get_todo_by_id(todo_id):
 def update_checked(todo, checked):
     todo.checked = checked
     db_session.commit()
-
 
 
 class TestSpike:
