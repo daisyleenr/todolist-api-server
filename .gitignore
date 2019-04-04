@@ -1,5 +1,4 @@
 .idea
-config.py
-alembic.ini
 /spiking
 /.history
+/.vscode

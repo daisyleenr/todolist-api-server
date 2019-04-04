@@ -31,6 +31,11 @@ class TodoSchema(Schema):
 todos_schema = TodoSchema(many=True)
 
 
+@app.route("/")
+def index():
+    return "hello todolist"
+
+
 @app.route("/todos")
 def get_todos():
     todos = db_session.query(Todos).all()
