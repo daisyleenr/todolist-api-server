@@ -1,13 +1,16 @@
 from __future__ import with_statement
 
+from model import Base
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import create_engine
+# from sqlalchemy import pool, engine_from_config
 
 from alembic import context
 
-from config import DB_STRING
+import os
+import sys
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -22,13 +25,13 @@ fileConfig(config.config_file_name)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
-from model import Base
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
@@ -43,7 +46,12 @@ def run_migrations_offline():
 
     """
     # url = config.get_main_option("sqlalchemy.url")
-    url = DB_STRING
+    DB_USER = os.getenv("TODO_DB_USER", "todolist")
+    DB_PASSWORD = os.getenv("TODO_DB_PASSWORD", "todolist")
+    DB_NAME = os.getenv("TODO_DB_NAME", "todolist")
+    DB_HOST = os.getenv("TODO_DB_HOST", "localhost")
+    url = "mysql://" + DB_USER + ":" + DB_PASSWORD + "@" + DB_HOST + "/" + DB_NAME + "?charset=utf8"
+
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True
     )
@@ -59,11 +67,18 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # connectable = engine_from_config(
+    #     config.get_section(config.config_ini_section),
+    #     prefix="sqlalchemy.",
+    #     poolclass=pool.NullPool,
+    # )
+    
+    DB_USER = os.getenv("TODO_DB_USER", "todolist")
+    DB_PASSWORD = os.getenv("TODO_DB_PASSWORD", "todolist")
+    DB_NAME = os.getenv("TODO_DB_NAME", "todolist")
+    DB_HOST = os.getenv("TODO_DB_HOST", "localhost")
+    url = "mysql://" + DB_USER + ":" + DB_PASSWORD + "@" + DB_HOST + "/" + DB_NAME + "?charset=utf8"
+    connectable = create_engine(url)
 
     with connectable.connect() as connection:
         context.configure(
