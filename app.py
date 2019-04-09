@@ -11,6 +11,7 @@ from model import Todos
 from config import DB_STRING
 from marshmallow import Schema, fields
 
+print("connect: " + DB_STRING)
 engine = create_engine(DB_STRING, echo=True, pool_recycle=3600)
 Session = sessionmaker(bind=engine)
 db_session = scoped_session(sessionmaker(autocommit=False,

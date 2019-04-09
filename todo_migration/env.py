@@ -51,7 +51,7 @@ def run_migrations_offline():
     DB_NAME = os.getenv("TODO_DB_NAME", "todolist")
     DB_HOST = os.getenv("TODO_DB_HOST", "localhost")
     url = "mysql://" + DB_USER + ":" + DB_PASSWORD + "@" + DB_HOST + "/" + DB_NAME + "?charset=utf8"
-
+    print("run_migrations_offline: " + url)
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True
     )
@@ -78,6 +78,7 @@ def run_migrations_online():
     DB_NAME = os.getenv("TODO_DB_NAME", "todolist")
     DB_HOST = os.getenv("TODO_DB_HOST", "localhost")
     url = "mysql://" + DB_USER + ":" + DB_PASSWORD + "@" + DB_HOST + "/" + DB_NAME + "?charset=utf8"
+    print("run_migrations_online: " + url)
     connectable = create_engine(url)
 
     with connectable.connect() as connection:
