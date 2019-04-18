@@ -11,7 +11,7 @@ services:
   - mysql
 
 before_install:
-  - mysql -e 'CREATE DATABASE todolist;'
+  - mysql -e 'CREATE DATABASE todolist CHARACTER SET utf8 COLLATE utf8_general_ci;'
 
 env:
   - TODO_DB_USER=root TODO_DB_PASSWORD="" TODO_DB_NAME=todolist TODO_DB_HOST=localhost PYTHONPATH=".:$PYTHONPATH"
