@@ -16,6 +16,7 @@ before_install:
 
 # command to run tests
 script:
+  - export PYTHONPATH=.:$PYTHONPATH
   - alembic upgrade head
   - pytest
 
