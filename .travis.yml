@@ -7,6 +7,15 @@ sudo: true
 install:
   - pip install -r requirements.txt
 
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE todolist;'
+
+
 # command to run tests
-script: pytest
+script:
+  - alembic upgrade head
+  - pytest
 
