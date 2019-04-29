@@ -1,4 +1,4 @@
-# todolist api server
+# todolist api server [![Build Status](https://travis-ci.org/daisyleenr/todolist-api-server.svg?branch=master)](https://travis-ci.org/daisyleenr/todolist-api-server)
 
 Flask project for study
 
