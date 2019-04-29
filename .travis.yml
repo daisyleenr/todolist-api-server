@@ -18,7 +18,7 @@ env:
 before_install:
  - mysql -e 'CREATE DATABASE todolist CHARACTER SET utf8 COLLATE utf8_general_ci;'
  - docker build -t daisyleenr/todo-api-server:$TRAVIS_BUILD_NUMBER -t daisyleenr/todo-api-server:latest .
- - docker run -d -p 5000:5000 -e TODO_DB_USER=$TODO_DB_USER -e TODO_DB_NAME=$TODO_DB_NAME -e TODO_DB_HOST=$TODO_DB_HOST -e PYTHONPATH=$PYTHONPATH daisyleenr/todo-api-server:latest
+ - docker run -d -p 5000:5000 -e TODO_DB_USER=$TODO_DB_USER -e TODO_DB_NAME=$TODO_DB_NAME -e TODO_DB_HOST=$TODO_DB_HOST daisyleenr/todo-api-server:latest
  - docker ps -a
 
 install:
@@ -27,4 +27,4 @@ install:
 script:
  - alembic upgrade head
  - pytest
- - docker run daisyleenr/todo-api-server:latest /bin/sh -c "pytest"
+ - docker run -e TODO_DB_USER=$TODO_DB_USER -e TODO_DB_NAME=$TODO_DB_NAME -e TODO_DB_HOST=$TODO_DB_HOST daisyleenr/todo-api-server:latest /bin/sh -c "pytest"
