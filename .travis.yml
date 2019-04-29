@@ -3,22 +3,30 @@ python: 3.7
 dist: xenial
 sudo: true
 
-# command to install dependencies
-install:
-  - pip install -r requirements.txt
-
 services:
-  - mysql
-
-before_install:
-  - mysql -e 'CREATE DATABASE todolist CHARACTER SET utf8 COLLATE utf8_general_ci;'
+- mysql
+- docker
 
 env:
-  - TODO_DB_USER=root TODO_DB_PASSWORD="" TODO_DB_NAME=todolist TODO_DB_HOST=localhost PYTHONPATH=".:$PYTHONPATH"
+  global:
+    - TODO_DB_USER=root
+    - TODO_DB_PASSWORD=""
+    - TODO_DB_NAME=todolist
+    - TODO_DB_HOST=127.0.0.1
+    - PYTHONPATH=".:$PYTHONPATH"
+    - DOCKER_USERNAME=daisyleenr
+    secure: bp9QiDHgCK2XFRs+H/miDWwdItAvLwDhMVOfR5m+5tNAMzK9V96hWConOim0Q5+OxvRqPlmf1L5sJHxddo8OFo4NCYzniAvF8+CYieZSqxujEKBQv53acaySrpQQTe1klGI9Ms+SRuJ5NBBP+KjjxVPiOKQJH6TQcaueeUGURDm+ne/oXCYqDxuTWu6U4hxqXcaL2nKRkajCUj72Pko+pN1HLfHZkwVEF811Eb7pWT6Huw92m9IE36hbq40ovanWF+tbE5qKJU9hDiUxupOmUKAHUyqIFMvClpSgH7Cw0xflypJo0OnlNh4TtOZuRBjKLS7DO7oWSHJ1u1UaZ/ExuIwe6c5UuoD7gL4F3R3QQ9ze5YsYnDiHCjtPDA8lN8mRJCxzGpohxB0I22voJvXHQdT7auClE3Fe3fpGEBXXBaKpqYnRUKtC+mnZI7TIvLbjiczzykqDIhzoY7rjNPvZxzm6xypSAyE+sQAoZnPsVqD8rqu3zaUBVYVPlpjEAvb0ghsM70AhLNHPHymUJJrCTW4+S4UQAsHeITwrmEi4DdnZbYJCw126Ssf07x12qfWbQIqBX8LNh8x0d24NRcTbeUbZFdxp7+lTEKw6WdxxuizDpzO1XbmxawBYbrDaGtglmWOZ7mMikVyzPm0cWHKQAofniAVAX80kcSSAYJUEtrA=
 
-# command to run tests
+before_install:
+- mysql -e 'CREATE DATABASE todolist CHARACTER SET utf8 COLLATE utf8_general_ci;'
+- docker build -t daisyleenr/todo-api-server:$TRAVIS_BUILD_NUMBER -t daisyleenr/todo-api-server:latest .
+- docker run -d -p 5000:5000 -e TODO_DB_USER=$TODO_DB_USER -e TODO_DB_NAME=$TODO_DB_NAME -e TODO_DB_HOST=$TODO_DB_HOST -e PYTHONPATH=$PYTHONPATH daisyleenr/todo-api-server:latest
+- docker ps -a
+
+install:
+- pip install -r requirements.txt
+
 script:
-  - export PYTHONPATH=.:$PYTHONPATH
-  - alembic upgrade head
-  - pytest
-
+- alembic upgrade head
+- pytest
+- docker run daisyleenr/todo-api-server:latest /bin/sh -c "pytest"
