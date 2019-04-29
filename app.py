@@ -34,7 +34,7 @@ todos_schema = TodoSchema(many=True)
 
 @app.route("/")
 def index():
-    return "hello todolist test"
+    return "Hello Todolist :)"
 
 
 @app.route("/todos")
