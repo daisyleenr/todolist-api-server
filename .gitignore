@@ -2,3 +2,5 @@
 /spiking
 /.history
 /.vscode
+
+__pycache__
