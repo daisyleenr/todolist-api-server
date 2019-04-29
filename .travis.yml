@@ -27,4 +27,9 @@ install:
 script:
  - alembic upgrade head
  - pytest
- - docker run -e TODO_DB_USER=$TODO_DB_USER -e TODO_DB_NAME=$TODO_DB_NAME -e TODO_DB_HOST=$TODO_DB_HOST daisyleenr/todo-api-server:latest /bin/sh -c "pytest"
+
+deploy:
+  provider: script
+  script: bash docker_push
+  on:
+    branch: master
