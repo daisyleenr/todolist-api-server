@@ -1,15 +1,16 @@
 # coding: utf-8
 
-from flask import Flask, Response, request, jsonify
+from flask import Flask, request, jsonify
 # import ujson as json
 # import json
 from flask_cors import CORS
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker, scoped_session
 from model import Todos
 from config import DB_STRING
 from marshmallow import Schema, fields
+
 
 print("connect: " + DB_STRING)
 engine = create_engine(DB_STRING, echo=True, pool_recycle=3600)
@@ -39,7 +40,7 @@ def index():
 
 @app.route("/todos")
 def get_todos():
-    todos = db_session.query(Todos).all()
+    todos = db_session.query(Todos).order_by(desc(Todos.id)).all()
     return jsonify(todos_schema.dump(todos).data)
 
 
