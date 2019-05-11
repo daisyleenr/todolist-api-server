@@ -50,7 +50,7 @@ def add_todo():
     db_session.add(Todos(title=todo_text))
     db_session.commit()
 
-    todos = db_session.query(Todos).all()
+    todos = db_session.query(Todos).order_by(desc(Todos.id)).all()
     return jsonify(todos_schema.dump(todos).data)
 
 
