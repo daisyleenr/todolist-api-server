@@ -60,7 +60,7 @@ def update_todo(todo_id):
     todo.checked = 0 if todo.checked == 1 else 1
     db_session.commit()
 
-    todos = db_session.query(Todos).all()
+    todos = db_session.query(Todos).order_by(desc(Todos.id)).all()
     return jsonify(todos_schema.dump(todos).data)
 
 
@@ -69,7 +69,7 @@ def remove_todo(todo_id):
     db_session.query(Todos).filter_by(id=todo_id).delete()
     db_session.commit()
 
-    todos = db_session.query(Todos).all()
+    todos = db_session.query(Todos).order_by(desc(Todos.id)).all()
     return jsonify(todos_schema.dump(todos).data)
 
 
